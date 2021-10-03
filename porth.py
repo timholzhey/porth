@@ -1614,7 +1614,11 @@ if __name__ == '__main__' and '__file__' in globals():
             type_check_program(program)
         generate_nasm_linux_x86_64(program, basepath + ".asm")
         cmd_call_echoed(["nasm", "-felf64", basepath + ".asm"], silent)
-        cmd_call_echoed(["ld", "-o", basepath, basepath + ".o"], silent)
+        if os.name == 'nt':
+            win_to_linux_path = subprocess.check_output(f"wsl wslpath '{basepath}'").decode("utf-8").strip()
+            cmd_call_echoed(["wsl", "ld", "-o", win_to_linux_path, win_to_linux_path + ".o"], silent)
+        else:
+            cmd_call_echoed(["ld", "-o", basepath, basepath + ".o"], silent)
         if run:
             exit(cmd_call_echoed([basepath] + argv, silent))
     elif subcommand == "help":
