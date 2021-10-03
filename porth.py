@@ -1620,7 +1620,10 @@ if __name__ == '__main__' and '__file__' in globals():
         else:
             cmd_call_echoed(["ld", "-o", basepath, basepath + ".o"], silent)
         if run:
-            exit(cmd_call_echoed([basepath] + argv, silent))
+            if os.name == 'nt':
+                exit(cmd_call_echoed(["wsl", win_to_linux_path] + argv, silent))
+            else:
+                exit(cmd_call_echoed([basepath] + argv, silent))
     elif subcommand == "help":
         usage(compiler_name)
         exit(0)
